@@ -1,0 +1,41 @@
+# ============================================================
+#  MEXC Scalper — 可配置策略 / 风险参数
+#  改这里不用重启; main.py 启动时读一次, 若 hot-reload 另说
+# ============================================================
+
+account:
+  equity_usdt: 1000          # 账户权益 (USDT), 只用于仓位计算
+
+risk:
+  max_risk_per_trade_pct: 0.5  # 单笔风险: 权益的 0.5% = 5 USDT
+  min_rr: 1.5                  # 最低盈亏比; 低于此不触发信号
+  target_rr: 2.0               # breakout 目标盈亏比
+
+# 均值回归 (反向): 价格冲到 ±σ 外, 等吸收反弹
+mean_revert:
+  enabled: true
+  sigma_trigger: 1.8           # |z| >= 这个值才触发
+  stop_sigma_buffer: 0.3       # 止损放在触发 σ 之外再 0.3σ
+  target: vwap                 # vwap 或 poc
+  min_score: 3                 # 0-4, 命中条件数 >= 此值才出信号
+
+# 顺势突破: 价格稳定偏离均值, CVD / Delta 同向确认
+breakout:
+  enabled: true
+  sigma_min: 0.3               # 偏离 VWAP 至少 0.3σ
+  cvd_lookback: 60             # CVD 新高检测窗口 (bar)
+  delta_streak: 3              # 需要连续 N 根同色 Delta
+  stop_method: poc             # poc 或 last_bar
+  min_score: 3
+
+filters:
+  min_dom_imbalance: 1.3       # 前 5 档 bid/ask 比, 用作确认
+  cooldown_sec: 30             # 两个信号之间最小间隔
+  max_consecutive_losses: 2    # 连亏 N 单后自动停手
+
+trading:
+  symbol: BTC_USDT
+  contract_multiplier: 0.0001  # BTC 永续: 0.0001 BTC/张
+  mode: paper                  # paper 或 live
+  bridge_port: 8080            # 必须 8080 (插件硬编码)
+  default_live: false          # Live 复选框默认是否勾选

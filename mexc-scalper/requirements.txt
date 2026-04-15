@@ -1,0 +1,10 @@
+PyQt6
+pyqtgraph
+qasync
+websockets
+numpy
+pyyaml
+fastapi
+uvicorn
+ccxt
+python-dotenv
